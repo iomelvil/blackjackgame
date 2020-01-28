@@ -1,6 +1,7 @@
 #hello world
 #Blackjack
 #todo add shuffle deck method from hanabi code and draw card
+#todo enum the card deck suits
 import random
 
 class Card:
@@ -22,7 +23,7 @@ class Card:
 
 class Player:
     def __init__(self, name):
-        self.hand = hand[]
+        #self.hand = hand[]
         self.name = name
 
 class Deck:
@@ -41,6 +42,7 @@ class Deck:
 
 deck = Deck()
 deck.show()
-
+random.shuffle(deck.cards)
+deck.show()
 
 
