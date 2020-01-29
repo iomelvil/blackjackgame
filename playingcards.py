@@ -40,9 +40,6 @@ class Deck:
         for card in self.cards:
             card.show()
 
-deck = Deck()
-deck.show()
-random.shuffle(deck.cards)
-deck.show()
+
 
 
