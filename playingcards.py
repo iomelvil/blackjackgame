@@ -5,7 +5,7 @@
 import random
 
 class Card:
-    def __init__(self, suit, number):
+    def __init__(self, suit, number, value):
         self.s = suit #suite
         self.n = number #number
 
@@ -21,10 +21,24 @@ class Card:
         if self.n == 13:
             print("{} of {}".format("King", self.s))
 
+#    def show_value(self):
+#        if card.n in ("King", "Queen", "Jack", 10)
+
 class Player:
     def __init__(self, name):
-        #self.hand = hand[]
+        self.cards = []
         self.name = name
+
+    def draw(self,deck):
+        self.cards.append(deck.cards.pop(0))
+
+    def deal(self,deck):
+        self.cards.append(deck.cards.pop(0))
+        self.cards.append(deck.cards.pop(0))
+
+    def show(self):
+        for card in self.cards:
+            card.show()
 
 class Deck:
     def __init__(self):
