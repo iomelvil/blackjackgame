@@ -1,23 +1,24 @@
 from playingcards import *
 from other import *
+from cardvalue import *
 
-name = input("Welcome to the table. What is your name: ")
+
+
+name = "Todd" #input("Welcome to the table. What is your name: ")
 print("Ok " + Color.BOLD + name + Color.END + ", lets play blackjack!")
 
-player1 = Player(name)
-player2 = Player("Houes")
+dealer = Player("Dealer")
+player = Player(name)
 
 deck = Deck()
 random.shuffle(deck.cards)
-deck.show()
-print("\n")
-deck.cards[0].show()
-print("\n")
 
-player1.draw(deck)
-player1.show()
-print("\n")
-deck.cards[0].show()
-print("\n")
-deck.show()
+player.deal(deck)
+dealer.deal(deck)
+player.reveal()
+dealer.reveal()
+player.hand_value()
+dealer.hand_value()
+player.hit_stay(deck)
+player.hand_value()
 #while True:
