@@ -4,6 +4,7 @@
 #todo figure out how to deal with aces being 11 OR 1
 #lock hit prompt only accept y or no
 import random
+from input_validation import yes_or_no
 
 class Card:
     def __init__(self, suit, number):
@@ -35,6 +36,7 @@ class Player:
         self.name = name
 
     def draw(self,deck):
+        deck.cards[0].show()
         self.cards.append(deck.cards.pop(0))
 
     def deal(self,deck):
@@ -54,15 +56,22 @@ class Player:
         sum = 0
         for card in self.cards:
            sum = sum + card.value()
-        print("\n{}'s hand value is: {}".format(self.name, sum))
+        return sum
 
-    def hit_stay(self, deck):
-        hit = input("Would you like to hit? (y or n)") ## need to lock this to only accept y or n
-        if hit == "y":
+    def print_hand_value(self):
+        sum = 0
+        for card in self.cards:
+            sum = sum + card.value()
+        print("\n{}'s hand value is: {}".format(self.name, sum))
+        return sum
+
+    def hit_stay(self, deck,):
+        hit = yes_or_no("Would you like to hit?")
+        if hit:
             self.draw(deck)
         else:
-            print("{} will stay at {}".format(self.name, hand_value(self)))
-
+            print("{} will stay at {}".format(self.name, self.hand_value()))
+        return hit
 
 class Deck:
     def __init__(self):
