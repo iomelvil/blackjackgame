@@ -1,15 +1,12 @@
-#hello world
-#Blackjack
-#todo enum the card deck suits
-#todo figure out how to deal with aces being 11 OR 1
-#lock hit prompt only accept y or no
-import random
+# todo enum the card deck suits
+# todo figure out how to deal with aces being 11 OR 1
 from input_validation import yes_or_no
+
 
 class Card:
     def __init__(self, suit, number):
-        self.s = suit #suite
-        self.n = number #number
+        self.s = suit  # suite
+        self.n = number  # number
 
     def show(self):
         if self.n == 1:
@@ -36,11 +33,11 @@ class Player:
         self.name = name
         self.chips = 100
 
-    def draw(self,deck):
+    def draw(self, deck):
         deck.cards[0].show()
         self.cards.append(deck.cards.pop(0))
 
-    def deal(self,deck):
+    def deal(self, deck):
         self.cards.append(deck.cards.pop(0))
         self.cards.append(deck.cards.pop(0))
 
@@ -54,17 +51,17 @@ class Player:
             card.show()
 
     def hand_value(self):
-        sum = 0
+        hand_sum = 0
         for card in self.cards:
-           sum = sum + card.value()
-        return sum
+            hand_sum = hand_sum + card.value()
+        return hand_sum
 
     def print_hand_value(self):
-        sum = 0
+        hand_sum = 0
         for card in self.cards:
-            sum = sum + card.value()
-        print("\n{}'s hand value is: {}".format(self.name, sum))
-        return sum
+            hand_sum = hand_sum + card.value()
+        print("\n{}'s hand value is: {}".format(self.name, hand_sum))
+        return hand_sum
 
     def hit_stay(self, deck):
         hit = yes_or_no("Would you like to hit?")
@@ -93,7 +90,10 @@ class Deck:
         self.cards.append(player.cards)
         self.cards.append(dealer.cards)
         player.cards = []
+        print("emptying player cards")
         dealer.cards = []
+        print("emptying dealer cards")
+
 
 
 
