@@ -34,6 +34,7 @@ class Player:
     def __init__(self, name):
         self.cards = []
         self.name = name
+        self.chips = 100
 
     def draw(self,deck):
         deck.cards[0].show()
@@ -65,13 +66,14 @@ class Player:
         print("\n{}'s hand value is: {}".format(self.name, sum))
         return sum
 
-    def hit_stay(self, deck,):
+    def hit_stay(self, deck):
         hit = yes_or_no("Would you like to hit?")
         if hit:
             self.draw(deck)
         else:
             print("{} will stay at {}".format(self.name, self.hand_value()))
         return hit
+
 
 class Deck:
     def __init__(self):
@@ -86,6 +88,12 @@ class Deck:
     def show(self):
         for card in self.cards:
             card.show()
+
+    def reshuffle_hands(self, player, dealer):
+        self.cards.append(player.cards)
+        self.cards.append(dealer.cards)
+        player.cards = []
+        dealer.cards = []
 
 
 
