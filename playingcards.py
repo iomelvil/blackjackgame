@@ -21,10 +21,6 @@ class Card:
         if self.n == 13:
             print("{} of {}".format("King", self.s))
 
-class Player:
-    def __init__(self, name):
-        #self.hand = hand[]
-        self.name = name
 
 class Deck:
     def __init__(self):
