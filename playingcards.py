@@ -1,7 +1,8 @@
 #hello world
 #Blackjack
-#todo add shuffle deck method from hanabi code and draw card
 #todo enum the card deck suits
+#todo figure out how to deal with aces being 11 OR 1
+#lock hit prompt only accept y or no
 import random
 
 class Card:
@@ -21,6 +22,47 @@ class Card:
         if self.n == 13:
             print("{} of {}".format("King", self.s))
 
+    def value(self):
+        if self.n > 9:
+            return 10
+        else:
+            return self.n
+
+
+class Player:
+    def __init__(self, name):
+        self.cards = []
+        self.name = name
+
+    def draw(self,deck):
+        self.cards.append(deck.cards.pop(0))
+
+    def deal(self,deck):
+        self.cards.append(deck.cards.pop(0))
+        self.cards.append(deck.cards.pop(0))
+
+    def show(self):
+        print("\n{}'s hand:".format(self.name))
+        self.cards[0].show()
+
+    def reveal(self):
+        print("\n{}'s hand:".format(self.name))
+        for card in self.cards:
+            card.show()
+
+    def hand_value(self):
+        sum = 0
+        for card in self.cards:
+           sum = sum + card.value()
+        print("\n{}'s hand value is: {}".format(self.name, sum))
+
+    def hit_stay(self, deck):
+        hit = input("Would you like to hit? (y or n)") ## need to lock this to only accept y or n
+        if hit == "y":
+            self.draw(deck)
+        else:
+            print("{} will stay at {}".format(self.name, hand_value(self)))
+
 
 class Deck:
     def __init__(self):
@@ -36,9 +78,6 @@ class Deck:
         for card in self.cards:
             card.show()
 
-deck = Deck()
-deck.show()
-random.shuffle(deck.cards)
-deck.show()
+
 
 

@@ -1,24 +1,25 @@
-from playingcards import Card
-from playingcards import Deck
-import random
+from playingcards import *
+from other import *
+from cardvalue import *
 
-class Player:
-    def __init__(self, name):
-        #self.hand = hand[]
-        self.name = name
 
-deck = Deck()
-deck.show()
-random.shuffle(deck.cards)
-print("now shuffled\n")
-deck.show()
-print(deck.cards[2].s)
-print("{} of {}".format(deck.cards[51].s, deck.cards[51].n))
-print ("some bullshit")
-deck.cards[51].show()
+#need to wrap all this in a function Game_start
+def game_start():
+    #while True:
+    name = "Todd" #input("Welcome to the table. What is your name: ")
+    print("Ok " + Color.BOLD + name + Color.END + ", lets play blackjack!")
 
-def gameloop
-    while playstate = 1:
-        #do game
+    dealer = Player("Dealer")
+    player = Player(name)
 
-#adding some bullshit
+    deck = Deck()
+    random.shuffle(deck.cards)
+
+    player.deal(deck)
+    dealer.deal(deck)
+    player.reveal()
+    dealer.reveal()
+    player.hand_value()
+    dealer.hand_value()
+    player.hit_stay(deck)
+    player.hand_value()
