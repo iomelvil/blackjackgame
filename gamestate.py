@@ -3,6 +3,13 @@ from other import *
 from input_validation import *
 import random
 
+class Round:
+    def __init__(self, deck):
+        self.pot = pot
+        self.winner = winner
+        self.deck = deck
+        self.discard = discard
+
 def game_start():
     name = "Todd" # input("Welcome to the table. What is your name: ")
     print("Ok " + Color.BOLD + name + Color.END + ", lets play blackjack!")
@@ -14,6 +21,7 @@ def game_start():
     random.shuffle(deck.cards)
 
     while keep_playing:
+        player.count_chips()
         player.deal(deck)
         dealer.draw(deck)
         player.reveal()
@@ -38,5 +46,26 @@ def game_start():
         if dealer.hand_value() > 21:
             print("Dealer is over 21, BUST!")
         print("now dealer goes")
+
+"""
+ while keep_playing:
+    ask for ante (if no, don't keep playing)
+    while round--round as class has attr: pot, players, winner, deck
+        print current $
+        reshuffle() reshuffle if necessary
+        deal()
+        player goes()
+        dealer goes()
+        assign winner and payout()
+            winner()
+            payout()
+        hands to discard        
+ if 
+ 
+ 
+ """
+
+
+
 
 game_start()

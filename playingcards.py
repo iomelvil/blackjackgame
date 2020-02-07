@@ -34,8 +34,11 @@ class Player:
         self.chips = 100
 
     def draw(self, deck):
-        deck.cards[0].show()
+        #deck.cards[0].show()  dont show every time card is drawn
         self.cards.append(deck.cards.pop(0))
+
+    def count_chips(self):
+        print("{} has {} chips.".format(self.name, self.chips))
 
     def deal(self, deck):
         self.cards.append(deck.cards.pop(0))
