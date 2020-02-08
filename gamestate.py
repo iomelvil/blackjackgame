@@ -3,12 +3,17 @@ from other import *
 from input_validation import *
 import random
 
+
 class Round:
     def __init__(self, deck):
         self.pot = pot
         self.winner = winner
         self.deck = deck
         self.discard = discard
+        self.ante = ante
+
+    def ante_up(self):
+        yes_or_no("Do you want to buy in? Ante is {}".format(ante))
 
 def game_start():
     name = "Todd" # input("Welcome to the table. What is your name: ")
