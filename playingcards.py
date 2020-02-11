@@ -79,6 +79,7 @@ class Deck:
     def __init__(self):
         self.cards = []
         self.build()
+        self.discard = []
 
     def build(self):
         for s in ["Spades", "Clubs", "Diamonds", "Hearts"]:
@@ -90,8 +91,8 @@ class Deck:
             card.show()
 
     def reshuffle_hands(self, player, dealer):
-        self.cards.append(player.cards)
-        self.cards.append(dealer.cards)
+        self.discard.append(player.cards)
+        self.discard.append(dealer.cards)
         player.cards = []
         print("emptying player cards")
         dealer.cards = []
