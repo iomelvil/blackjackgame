@@ -1,5 +1,5 @@
 # todo enum the card deck suits
-# todo figure out how to deal with aces being 11 OR 1
+# todo figure out how to deal with aces being 11 OR 1  (ace always worth 11, if bust then check for ace, if ace then -10)
 from input_validation import yes_or_no
 
 

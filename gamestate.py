@@ -9,8 +9,17 @@ class Round:
         self.player = player
         self.dealer = dealer
         self.deck = deck
+        self.ante = 30
+
+    def buy_in(self):
+        self.player.chips = self.player.chips - self.ante
+
+    def pay_out(self):
+        self.player.chips = self.player.chips + (self.ante * 2)
+
 
     def round_start(self):
+        self.buy_in()
         self.player.count_chips()
         self.player.deal(self.deck)
         self.dealer.draw(self.deck)
@@ -38,7 +47,7 @@ class Round:
             print("Now dealer goes")
             while self.dealer.hand_value() < 17:
                 self.dealer.draw(self.deck)
-                self.dealer.show()
+                self.dealer.reveal()
                 if self.dealer.hand_value() > 21:
                     print("Dealer is over 21, BUST!")
                     bust = True
@@ -48,14 +57,14 @@ class Round:
             self.dealer.print_hand_value()
             self.player.print_hand_value()
 
-            if self.dealer.hand_value() > self.player.hand_value():
+            if self.dealer.hand_value() >= self.player.hand_value():
                 print("Dealer Wins!")
             else:
-                print("{} Wins!".format(self.player.name))
+                print("{} Wins {}!".format(self.player.name, self.ante))
+            bust = True
 
     def clear_round(self):
         self.deck.reshuffle_hands(self.player, self.dealer)
-
 
 
 def game_start():
@@ -72,6 +81,9 @@ def game_start():
         current_round = Round(player, dealer, deck)
         current_round.play_round()
         current_round.clear_round()
+        if player.chips < current_round.ante:
+            print("{} is out of chips. /sad trombone".format(player.name))
+            keep_playing = False
 
 
 game_start()
