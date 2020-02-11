@@ -26,12 +26,18 @@ class Card:
         else:
             return self.n
 
+class Hand(Player)
+    def __init__(self, cards, name, chips, bust):
+        self
+
 
 class Player:
     def __init__(self, name):
         self.cards = []
         self.name = name
         self.chips = 100
+        #self.ace = False Moving ace and Bust attribute to subclass Hand
+        #self.bust = False
 
     def draw(self, deck):
         #deck.cards[0].show()  dont show every time card is drawn

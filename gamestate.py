@@ -29,8 +29,7 @@ class Round:
         self.dealer.print_hand_value()
 
     def play_round(self):
-        bust = False
-        while not bust:
+        while self.player.bust is False and self.dealer.bust is False:
             self.round_start()
 
             while self.player.hand_value() < 21:
@@ -41,11 +40,10 @@ class Round:
 
             if self.player.hand_value() > 21:
                 print("{} is over 21, BUST!".format(self.player.name))
-                bust = True
-                break
+                self.player.bust = True
 
             print("Now dealer goes")
-            while self.dealer.hand_value() < 17:
+            while self.dealer.hand_value() < 17 and bust is False:
                 self.dealer.draw(self.deck)
                 self.dealer.reveal()
                 if self.dealer.hand_value() > 21:
@@ -54,21 +52,24 @@ class Round:
                     break
 
             print("End of round")
-            self.dealer.print_hand_value()
-            self.player.print_hand_value()
+            if not bust:
+                self.dealer.print_hand_value()
+                self.player.print_hand_value()
 
-            if self.dealer.hand_value() >= self.player.hand_value():
-                print("Dealer Wins!")
-            else:
-                print("{} Wins {}!".format(self.player.name, self.ante))
-            bust = True
+                if self.dealer.hand_value() >= self.player.hand_value():
+                    print("Dealer Wins!")
+                else:
+                    print("{} Wins {}!".format(self.player.name, self.ante))
+                    self.pay_out()
+                bust = True
 
     def clear_round(self):
         self.deck.reshuffle_hands(self.player, self.dealer)
 
 
+
 def game_start():
-    name = "Todd" # input("Welcome to the table. What is your name: ")
+    name = "Todd"  # input("Welcome to the table. What is your name: ")
     print("Ok " + Color.BOLD + name + Color.END + ", lets play blackjack!")
 
     dealer = Player("Dealer")
