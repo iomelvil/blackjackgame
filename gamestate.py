@@ -5,66 +5,22 @@ import random
 
 
 class Round:
-    def __init__(self, player, dealer, deck):
+    def __init__(self, deck, player, dealer):
+        self.pot = pot
+        self.winner = winner
+        self.deck = deck
+        self.discard = discard
         self.player = player
         self.dealer = dealer
-        self.deck = deck
-        self.ante = 30
-
-    def buy_in(self):
-        self.player.chips = self.player.chips - self.ante
-
-    def pay_out(self):
-        self.player.chips = self.player.chips + (self.ante * 2)
-
 
     def round_start(self):
-        self.buy_in()
-        self.player.count_chips()
-        self.player.deal(self.deck)
-        self.dealer.draw(self.deck)
+        self.player.deal(deck)
+        self.dealer.draw(deck)
         self.player.reveal()
         self.dealer.reveal()
         self.player.print_hand_value()
         self.dealer.print_hand_value()
 
-    def play_round(self):
-        bust = False
-        while not bust:
-            self.round_start()
-
-            while self.player.hand_value() < 21:
-                if not self.player.hit_stay(self.deck):
-                    break
-                self.player.reveal()
-                self.player.print_hand_value()
-
-            if self.player.hand_value() > 21:
-                print("{} is over 21, BUST!".format(self.player.name))
-                bust = True
-                break
-
-            print("Now dealer goes")
-            while self.dealer.hand_value() < 17:
-                self.dealer.draw(self.deck)
-                self.dealer.reveal()
-                if self.dealer.hand_value() > 21:
-                    print("Dealer is over 21, BUST!")
-                    bust = True
-                    break
-
-            print("End of round")
-            self.dealer.print_hand_value()
-            self.player.print_hand_value()
-
-            if self.dealer.hand_value() >= self.player.hand_value():
-                print("Dealer Wins!")
-            else:
-                print("{} Wins {}!".format(self.player.name, self.ante))
-            bust = True
-
-    def clear_round(self):
-        self.deck.reshuffle_hands(self.player, self.dealer)
 
 
 def game_start():
@@ -73,20 +29,33 @@ def game_start():
 
     dealer = Player("Dealer")
     player = Player(name)
+    keep_playing = True
     deck = Deck()
     random.shuffle(deck.cards)
-    keep_playing = True
 
     while keep_playing:
-        current_round = Round(player, dealer, deck)
-        current_round.play_round()
-        current_round.clear_round()
-        if player.chips < current_round.ante:
-            print("{} is out of chips. /sad trombone".format(player.name))
-            keep_playing = False
+        round = Round(deck, player, dealer)
+        round.round_start()
 
 
-game_start()
+        while player.hand_value() <= 21:
+            if not player.hit_stay(deck):
+                break
+            player.reveal()
+            player.print_hand_value()
+
+        if player.hand_value() > 21:
+            print("{} is over 21, BUST!".format(player.name))
+            keep_playing = yes_or_no("Would you like to keep playing?")
+            if keep_playing:
+                deck.reshuffle_hands(player, dealer)
+        dealer.reveal() # this still shows dealer has 4 cards? -- loop structure isnt right, dealer is going after ershuffle
+        while dealer.hand_value() < 17:
+            dealer.draw(deck)
+        if dealer.hand_value() > 21:
+            print("Dealer is over 21, BUST!")
+        print("now dealer goes")
+
 """
  while keep_playing:
     ask for ante (if no, don't keep playing)
