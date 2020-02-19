@@ -32,6 +32,8 @@ class Player:
         self.cards = []
         self.name = name
         self.chips = 100
+        self.bust = False
+        self.hand_value = 0
 
     def draw(self, deck):
         #deck.cards[0].show()  dont show every time card is drawn
@@ -53,25 +55,22 @@ class Player:
         for card in self.cards:
             card.show()
 
-    def hand_value(self):
+    def calc_hand_value(self):
         hand_sum = 0
         for card in self.cards:
             hand_sum = hand_sum + card.value()
         return hand_sum
 
     def print_hand_value(self):
-        hand_sum = 0
-        for card in self.cards:
-            hand_sum = hand_sum + card.value()
-        print("\n{}'s hand value is: {}".format(self.name, hand_sum))
-        return hand_sum
+        print("\n{}'s hand value is: {}".format(self.name, self.hand_value))
 
     def hit_stay(self, deck):
         hit = yes_or_no("Would you like to hit?")
         if hit:
             self.draw(deck)
+            self.hand_value = self.calc_hand_value()
         else:
-            print("{} will stay at {}".format(self.name, self.hand_value()))
+            print("{} will stay at {}".format(self.name, self.hand_value))
         return hit
 
 
