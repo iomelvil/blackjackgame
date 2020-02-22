@@ -1,6 +1,7 @@
 from enum import Enum
 from random import randint
 
+
 class CardValue(Enum):
     Ace = 1
     Two = 2
@@ -40,7 +41,7 @@ class Card(tuple):
         return "{} of {}s".format(self.value.name, self.suit.name)
 
     @property
-    def value(self): # print(card.value) shows card # only (ace -> king) suit can be ignored for blackjack logic for now
+    def value(self):  # print(card.value) shows card # only (ace -> king) suit can be ignored for blackjack logic
         return self[0]
 
     @property
@@ -70,26 +71,62 @@ class Player:
     def __str__(self):
         return "{} has {} chips. Current Hand: {}".format(self.name, self.chips, (', '.join(str(card) for card in self.cards)))
 
-    def draw(self, deck, count): # Randomly draws a card from the deck and places it in players hand
-        for i in range(count):
-            self.cards.append(deck.cards.pop(randint(0, deck.size - 1)))
+    def draw(self, deck, count, seed):  # Randomly draws a card from the deck and places it in players hand
+        if 0 < seed < 51:
+            self.cards.append(deck.cards.pop(deck.cards[0]))
             deck.size -= 1
+        else:
+            for i in range(count):
+                self.cards.append(deck.cards.pop(randint(0, deck.size - 1)))
+                deck.size -= 1
+
+    def place_bet(self, round):
+        player_bet = input("How much will you bet?")
+        self.chips -= player_bet
+        round.pot += player_bet
+
+    def discard(self):
+        self.cards = []
+
+    #Calculates the hand value.
+    def hand_value(self):
+        hand_sum = 0
+        for card in self.cards:
+            if card.value.value == 1:
+                if (hand_sum + 11) > 21:
+                    hand_sum += 1
+                else:
+                    hand_sum += 11
+            elif card.value.value <= 10:
+                hand_sum += card.value.value
+            else:
+                hand_sum += 10
+        return hand_sum
+
+
+
+
+
+
+    def check_blackjack(self):
+        if len(self.cards) == 2 and self.hand_value() == 21:
+            return True
+        else:
+            return False
+
+
 
 class Round:
-    def __init__(self):
-        self.ante = 10
+    def __init__(self, player, dealer, deck):
         self.pot = 0
-        self.winner = "none"
 
-    def payout(self): pass
+    def pay_out(self, winner):
+        pass
 
 
 deck = Deck()
 player = Player("Bob")
-print(deck)
-print(deck.size)
-print("\n")
-player.draw(deck, 3)
+player.cards[0] = deck.cards[0]
+player.cards[1] = deck.cards[1]
 print(player)
-print(deck)
-# adding comment ss
+print(player.hand_value())
