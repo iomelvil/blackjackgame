@@ -71,9 +71,11 @@ class Player:
     def __str__(self):
         return "{} has {} chips. Current Hand: {}".format(self.name, self.chips, (', '.join(str(card) for card in self.cards)))
 
-    def draw(self, deck, count, seed):  # Randomly draws a card from the deck and places it in players hand
-        if 0 < seed < 51:
-            self.cards.append(deck.cards.pop(deck.cards[0]))
+    # Draws a card from the deck into the players hand. If a seed between 1-52 is requested,
+    # one specific card in the deck is drawn.
+    def draw(self, deck, count, seed=0):
+        if 0 < seed <= deck.size:
+            self.cards.append(deck.cards.pop(seed-1))
             deck.size -= 1
         else:
             for i in range(count):
@@ -88,24 +90,23 @@ class Player:
     def discard(self):
         self.cards = []
 
-    #Calculates the hand value.
+    # Calculates the hand value, assumes Aces are 11s unless over 21.
     def hand_value(self):
         hand_sum = 0
+        ace_count = 0
         for card in self.cards:
             if card.value.value == 1:
-                if (hand_sum + 11) > 21:
-                    hand_sum += 1
-                else:
-                    hand_sum += 11
+                ace_count += 1
+                hand_sum += 11
             elif card.value.value <= 10:
                 hand_sum += card.value.value
             else:
                 hand_sum += 10
+        while ace_count > 0:
+            if hand_sum > 21:
+                hand_sum -= 10
+            ace_count -= 1
         return hand_sum
-
-
-
-
 
 
     def check_blackjack(self):
@@ -126,7 +127,9 @@ class Round:
 
 deck = Deck()
 player = Player("Bob")
-player.cards[0] = deck.cards[0]
-player.cards[1] = deck.cards[1]
+print(deck)
+player.draw(deck, 1, 1)
+player.draw(deck, 1, 1)
+player.draw(deck, 1)
 print(player)
 print(player.hand_value())
