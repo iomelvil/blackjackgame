@@ -51,7 +51,7 @@ class Card(tuple):
 
 class Deck:
     def __init__(self):
-        self.cards  = [Card(value, suit) for value in CardValue for suit in CardSuit]
+        self.cards = [Card(value, suit) for value in CardValue for suit in CardSuit]
         self.size = len(self.cards)
 
     def show(self):
@@ -59,14 +59,14 @@ class Deck:
             print(card)
 
     def __str__(self):
-        return  str(self.size) + " cards |" + " " + (', '.join(str(card) for card in self.cards))
+        return str(self.size) + " cards |" + " " + (', '.join(str(card) for card in self.cards))
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, chips=100):
         self.cards = []
         self.name = name
-        self.chips = 100
+        self.chips = chips
 
     def __str__(self):
         return "{} has {} chips. Current Hand: {}".format(self.name, self.chips, (', '.join(str(card) for card in self.cards)))
@@ -82,10 +82,12 @@ class Player:
                 self.cards.append(deck.cards.pop(randint(0, deck.size - 1)))
                 deck.size -= 1
 
-    def place_bet(self, round):
-        player_bet = input("How much will you bet?")
-        self.chips -= player_bet
-        round.pot += player_bet
+    # TODO need to update this with validation (only bet int less or equal to your chips)
+    def place_bet(self):
+        while "the answer is invalid":
+            reply = int(input("How much will you bet? You have " + str(self.chips)))
+            if 0 < reply <= self.chips:
+                return reply
 
     def discard(self):
         self.cards = []
@@ -108,7 +110,6 @@ class Player:
             ace_count -= 1
         return hand_sum
 
-
     def check_blackjack(self):
         if len(self.cards) == 2 and self.hand_value() == 21:
             return True
@@ -116,20 +117,41 @@ class Player:
             return False
 
 
-
 class Round:
     def __init__(self, player, dealer, deck):
         self.pot = 0
+        self.player = player
+        self.dealer = dealer
+        self.deck = deck
+
+    def round_bet(self):
+        bet = self.player.place_bet()
+        self.pot += bet
+        self.player.chips -= bet
 
     def pay_out(self, winner):
-        pass
+        winner.chips += self.pot
+        self.pot = 0
+    #
+    # winner = False
+    # while not winner:
+    #     pass
 
 
-deck = Deck()
-player = Player("Bob")
-print(deck)
-player.draw(deck, 1, 1)
-player.draw(deck, 1, 1)
-player.draw(deck, 1)
-print(player)
-print(player.hand_value())
+def game_start():
+    deck = Deck()
+    player = Player("Bob")
+    dealer = Player("Dealer", 9999)
+    game_over = False
+    # print(deck)
+    # player.draw(deck, 1, 1)
+    # player.draw(deck, 1, 51)
+    # print(player)
+    # print(player.hand_value())
+    # print(player.check_blackjack())
+    round_count = 1
+    while not game_over:
+        round = Round(player, dealer, deck)
+        round.round_bet()
+
+game_start()
