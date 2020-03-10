@@ -92,6 +92,11 @@ class Player:
     def discard(self):
         self.cards = []
 
+    def show(self):
+        print("Dealer has:")
+        for card in self.cards:
+            print(card)
+
     # Calculates the hand value, assumes Aces are 11s unless over 21.
     def hand_value(self):
         hand_sum = 0
@@ -132,17 +137,16 @@ class Round:
     def pay_out(self, winner):
         winner.chips += self.pot
         self.pot = 0
-    #
-    # winner = False
-    # while not winner:
-    #     pass
 
+    def print_winner(self, winner):
+        print("{} wins!".format(winner.name))
 
 def game_start():
     deck = Deck()
     player = Player("Bob")
     dealer = Player("Dealer", 9999)
     game_over = False
+
     # print(deck)
     # player.draw(deck, 1, 1)
     # player.draw(deck, 1, 51)
@@ -151,7 +155,39 @@ def game_start():
     # print(player.check_blackjack())
     round_count = 1
     while not game_over:
+        print("Round {}".format(round_count)) # <-- program gets to here on round 2 and stops? debugs
         round = Round(player, dealer, deck)
         round.round_bet()
+        initial_draw(player, dealer, deck)
+        check_blackjack(round, player, dealer)
+        round_count += 1  # indicates round end
+
+
+def initial_draw(player, dealer, deck):  # to set player to have blackjack, draw with seeds 1 and 51
+    player.draw(deck, 1, 1)
+    dealer.draw(deck, 1)
+    player.draw(deck, 1, 50)
+    print(player)
+    dealer.show()
+    dealer.draw(deck, 1)
+
+
+def check_blackjack(round, player, dealer):
+    if player.check_blackjack() or dealer.check_blackjack():
+        if player.check_blackjack() and dealer.check_blackjack():
+            print("Ya both got blackjack. Dealer is forgiving")
+            round.pay_out(player)
+        if player.check_blackjack():
+            print("Blackjack!")
+            round.print_winner(player)
+            round.pay_out(player)
+        if dealer.check_blackjack():
+            print("Blackjack!")
+            round.print_winner(dealer)
+            round.pay_out(player)
+
+
+
+
 
 game_start()
