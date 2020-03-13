@@ -135,8 +135,10 @@ class Round:
         self.player.chips -= bet
 
     def pay_out(self, winner):
-        winner.chips += self.pot
+        winner.chips += self.pot * 2
+        print("Payout {} to {}".format(self.pot, winner.name))
         self.pot = 0
+
 
     def print_winner(self, winner):
         print("{} wins!".format(winner.name))
@@ -160,13 +162,16 @@ def game_start():
         round.round_bet()
         initial_draw(player, dealer, deck)
         check_blackjack(round, player, dealer)
+        print("hit-play logic here")
+        player.discard()
+        dealer.discard()
         round_count += 1  # indicates round end
 
 
 def initial_draw(player, dealer, deck):  # to set player to have blackjack, draw with seeds 1 and 51
-    player.draw(deck, 1, 1)
+    player.draw(deck, 1)
     dealer.draw(deck, 1)
-    player.draw(deck, 1, 50)
+    player.draw(deck, 1)
     print(player)
     dealer.show()
     dealer.draw(deck, 1)
