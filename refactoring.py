@@ -1,5 +1,6 @@
 from enum import Enum
 from random import randint
+from input_validation import yes_or_no
 
 
 class CardValue(Enum):
@@ -63,7 +64,7 @@ class Deck:
 
 
 class Player:
-    def __init__(self, name, chips=100):
+    def __init__(self, name, chips=100):  # TODO Could add player.hand_value as an attribute instead of recalc each time
         self.cards = []
         self.name = name
         self.chips = chips
@@ -73,7 +74,7 @@ class Player:
 
     # Draws a card from the deck into the players hand. If a seed between 1-52 is requested,
     # one specific card in the deck is drawn.
-    def draw(self, deck, count, seed=0):
+    def draw(self, deck, count=1, seed=0):
         if 0 < seed <= deck.size:
             self.cards.append(deck.cards.pop(seed-1))
             deck.size -= 1
@@ -82,7 +83,7 @@ class Player:
                 self.cards.append(deck.cards.pop(randint(0, deck.size - 1)))
                 deck.size -= 1
 
-    # TODO need to update this with validation (only bet int less or equal to your chips)
+    # Asks for a bet less than your chip count.
     def place_bet(self):
         while "the answer is invalid":
             reply = int(input("How much will you bet? You have " + str(self.chips)))
@@ -93,9 +94,10 @@ class Player:
         self.cards = []
 
     def show(self):
-        print("Dealer has:")
+        print("{} has:".format(self.name), end=" ")
         for card in self.cards:
-            print(card)
+            print(card, end=", ")
+        print("\n")
 
     # Calculates the hand value, assumes Aces are 11s unless over 21.
     def hand_value(self):
@@ -121,6 +123,24 @@ class Player:
         else:
             return False
 
+    def hit_stay(self, deck):
+        hit = yes_or_no("Would you like to hit?")
+        if hit:
+            self.draw(deck, 1)
+        else:
+            print("{} will stay at {}".format(self.name, self.hand_value()))
+        return hit
+
+    def bot_hit_stay(self, deck):
+        while self.hand_value() < 17:
+            self.draw(deck, 1)
+            self.show()
+            if self.hand_value() > 21:
+                print("Bust!!!")
+                return self.hand_value()
+        if self.hand_value() >= 17:
+            print("{} will stay at {}".format(self.name, self.hand_value()))
+
 
 class Round:
     def __init__(self, player, dealer, deck):
@@ -139,9 +159,25 @@ class Round:
         print("Payout {} to {}".format(self.pot, winner.name))
         self.pot = 0
 
-
     def print_winner(self, winner):
         print("{} wins!".format(winner.name))
+
+    def determine_winner(self, player, dealer):
+        player_hand_value = player.hand_value()
+        dealer_hand_value = dealer.hand_value()
+        if player_hand_value <= 21 and dealer_hand_value <= 21:
+            if player_hand_value == dealer_hand_value:
+                print("push")
+                return dealer
+            else:
+                if player_hand_value > dealer_hand_value:
+                    return player
+                else:
+                    return dealer
+
+
+
+
 
 def game_start():
     deck = Deck()
@@ -157,12 +193,23 @@ def game_start():
     # print(player.check_blackjack())
     round_count = 1
     while not game_over:
-        print("Round {}".format(round_count)) # <-- program gets to here on round 2 and stops? debugs
+        print("Round {}".format(round_count))
         round = Round(player, dealer, deck)
         round.round_bet()
         initial_draw(player, dealer, deck)
         check_blackjack(round, player, dealer)
-        print("hit-play logic here")
+
+        while player.hand_value() <= 21:
+            if player.hit_stay(deck):
+                player.show()
+                print(player.hand_value())
+            else:
+                break
+
+        dealer.bot_hit_stay(deck)
+        winner = round.determine_winner(player, dealer)
+        print("{} wins!".format(winner.name))
+        round.pay_out(winner)
         player.discard()
         dealer.discard()
         round_count += 1  # indicates round end
