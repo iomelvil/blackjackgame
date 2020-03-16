@@ -157,7 +157,7 @@ class Round:
 
     def pay_out(self):
         self.winner.chips += self.pot * 2
-        print("Payout {} to {}".format(self.pot, self.winner.name))
+        print("Payout {} to {}".format(self.pot * 2, self.winner.name))
         self.pot = 0
 
     def print_winner(self, winner):
@@ -177,20 +177,23 @@ class Round:
             else:
                 if player_hand_value > dealer_hand_value:
                     self.winner = self.player
-                else:
-                    pass
 
     def check_blackjack(self):
         if self.player.check_blackjack() or self.dealer.check_blackjack():
             if self.player.check_blackjack() and self.dealer.check_blackjack():
                 print("Ya both got blackjack. Dealer is forgiving")
                 self.winner = self.player
-            if self.player.check_blackjack():
+                return True
+            elif self.player.check_blackjack():
                 print("Blackjack!")
                 self.winner = self.player
-            if self.dealer.check_blackjack():
+                return True
+            else:
                 print("Blackjack!")
                 self.winner = self.player
+                return True
+        return False
+
 
 
 
@@ -210,24 +213,25 @@ def game_start():
     round_count = 1
     while not game_over:
         print("Round {}".format(round_count))
-        round = Round(player, dealer, deck)
-        round.round_bet()
+        current_round = Round(player, dealer, deck)
+        current_round.round_bet()
         initial_draw(player, dealer, deck)
-        round.check_blackjack()
-
-        while player.hand_value() <= 21:
-            if player.hit_stay(deck):
-                player.show()
-                print(player.hand_value())
-            else:
-                break
-
-        dealer.bot_hit_stay(deck)
-        winner = round.determine_winner(player, dealer)
-        print("{} wins!".format(winner.name))
-        round.pay_out(winner)
+        if current_round.check_blackjack() is False:  # TODO player busts but dealer still hits?
+            while player.hand_value() <= 21:
+                if player.hit_stay(deck):
+                    player.show()
+                    print(player.hand_value())
+                else:
+                    break
+            dealer.bot_hit_stay(deck)
+            current_round.determine_winner()
+            # TODO need to stop game when player is out of chips
+        print("{} wins!".format(current_round.winner.name))
+        current_round.pay_out()
         player.discard()
         dealer.discard()
+        if player.chips == 0:
+
         round_count += 1  # indicates round end
 
 
