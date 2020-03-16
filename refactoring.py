@@ -148,33 +148,49 @@ class Round:
         self.player = player
         self.dealer = dealer
         self.deck = deck
+        self.winner = dealer
 
     def round_bet(self):
         bet = self.player.place_bet()
         self.pot += bet
         self.player.chips -= bet
 
-    def pay_out(self, winner):
-        winner.chips += self.pot * 2
-        print("Payout {} to {}".format(self.pot, winner.name))
+    def pay_out(self):
+        self.winner.chips += self.pot * 2
+        print("Payout {} to {}".format(self.pot, self.winner.name))
         self.pot = 0
 
     def print_winner(self, winner):
         print("{} wins!".format(winner.name))
 
-    def determine_winner(self, player, dealer):
-        player_hand_value = player.hand_value()
-        dealer_hand_value = dealer.hand_value()
-        if player_hand_value <= 21 and dealer_hand_value <= 21:
+    def determine_winner(self):
+        player_hand_value = self.player.hand_value()
+        dealer_hand_value = self.dealer.hand_value()
+        if player_hand_value > 21:
+            print("player is bust")
+        elif dealer_hand_value > 21:
+            print("dealer bust")
+            self.winner = self.player
+        else:
             if player_hand_value == dealer_hand_value:
                 print("push")
-                return dealer
             else:
                 if player_hand_value > dealer_hand_value:
-                    return player
+                    self.winner = self.player
                 else:
-                    return dealer
+                    pass
 
+    def check_blackjack(self):
+        if self.player.check_blackjack() or self.dealer.check_blackjack():
+            if self.player.check_blackjack() and self.dealer.check_blackjack():
+                print("Ya both got blackjack. Dealer is forgiving")
+                self.winner = self.player
+            if self.player.check_blackjack():
+                print("Blackjack!")
+                self.winner = self.player
+            if self.dealer.check_blackjack():
+                print("Blackjack!")
+                self.winner = self.player
 
 
 
@@ -197,7 +213,7 @@ def game_start():
         round = Round(player, dealer, deck)
         round.round_bet()
         initial_draw(player, dealer, deck)
-        check_blackjack(round, player, dealer)
+        round.check_blackjack()
 
         while player.hand_value() <= 21:
             if player.hit_stay(deck):
@@ -224,19 +240,7 @@ def initial_draw(player, dealer, deck):  # to set player to have blackjack, draw
     dealer.draw(deck, 1)
 
 
-def check_blackjack(round, player, dealer):
-    if player.check_blackjack() or dealer.check_blackjack():
-        if player.check_blackjack() and dealer.check_blackjack():
-            print("Ya both got blackjack. Dealer is forgiving")
-            round.pay_out(player)
-        if player.check_blackjack():
-            print("Blackjack!")
-            round.print_winner(player)
-            round.pay_out(player)
-        if dealer.check_blackjack():
-            print("Blackjack!")
-            round.print_winner(dealer)
-            round.pay_out(player)
+
 
 
 
